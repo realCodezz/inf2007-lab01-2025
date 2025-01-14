@@ -39,7 +39,7 @@ fun MainScreen() {
     Lab01Theme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             var username by remember { mutableStateOf("") }
-            var showGreeting by remember { mutableStateOf(false) }
+            var greetingMessage by remember { mutableStateOf("") }
 
             Column(
                 modifier = Modifier
@@ -48,15 +48,23 @@ fun MainScreen() {
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                UserInput(
-                    name = name,
-                    onNameChange = { name = it }
+                // User Input
+                TextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text("Enter your name") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("nameInput")
                 )
 
+                // Submit Button
                 Button(
                     onClick = {
-                        if (username.isNotBlank()) {
-                            showGreeting = false
+                        greetingMessage = if (username.isNotBlank()) {
+                            "Hello $username!, Welcome to INF2007!"
+                        } else {
+                            ""
                         }
                     },
                     modifier = Modifier
@@ -66,40 +74,20 @@ fun MainScreen() {
                     Text("Submit")
                 }
 
-                if (showGreeting) {
-                    Greeeting(
-                        name = username,
+                // Greeting Message
+                if (greetingMessage.isNotEmpty()) {
+                    Text(
+                        text = greetingMessage,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp)
+                            .testTag("greetingMsg"),
+                        style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
                     )
-
                 }
             }
         }
     }
-}
-
-@Composable
-fun UserInput(name: String, onNameChange: (String) -> Unit, modifier: Modifier = Modifier) {
-    TextField(
-        value = name,
-        onValueChange = { onNameChange(it) },
-        label = { Text("Enter your Name") },
-        modifier = modifier
-            .fillMaxWidth()
-            .testTag("UserInput")
-    )
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $username!, Welcome to InF2007!",
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag("greeting")
-    )
 }
 
 @Preview(showBackground = true)
